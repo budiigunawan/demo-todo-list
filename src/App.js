@@ -5,7 +5,11 @@ import { Spin, List, Divider, Button, Form, Input } from 'antd';
 import './App.css';
 import styled from 'styled-components';
 
-import { DeleteFilled, CheckCircleOutlined } from '@ant-design/icons';
+import {
+  DeleteFilled,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
 
 // Custom CSS Component Start //
 const TitleApp = styled.h2`
@@ -76,6 +80,25 @@ function App() {
       });
   };
 
+  // function untuk update done
+  const handleUpdate = (taskId, taskName, taskDone) => {
+    // // masukkan parameter taskName ke variabel editedTask, ubah status done jadi true
+    let editedTask = { name: taskName, done: !taskDone };
+
+    // PUT variabel editedTask ke backend
+    axios
+      .put(`http://localhost:3001/tasks/${taskId}`, editedTask)
+      .then((res) => {
+        // Jika berhasil update nyalakan trigger
+        console.log(res.statusText);
+        setTrigger(!trigger);
+      })
+      .catch((err) => {
+        // Jika gagal console log pesan error
+        console.log(err);
+      });
+  };
+
   return (
     <div className='App'>
       <header className='App-header'>
@@ -111,16 +134,28 @@ function App() {
               dataSource={taskList}
               renderItem={(item) => (
                 <ListCustom.Item>
-                  <TaskName>{item.name}</TaskName>
+                  <TaskName
+                    style={{
+                      textDecoration:
+                        item.done === true ? 'line-through' : null,
+                    }}
+                  >
+                    {item.name}
+                  </TaskName>
                   <ButtonContainer>
                     <Button
-                      type='primary'
-                      title='done'
+                      type={item.done ? 'default' : 'primary'}
+                      title={item.done ? 'undone' : 'done'}
                       onClick={() => {
-                        console.log(`${item.name} done`);
+                        handleUpdate(item.id, item.name, item.done);
                       }}
+                      loading={loading}
                     >
-                      <CheckCircleOutlined />
+                      {item.done ? (
+                        <CloseCircleOutlined />
+                      ) : (
+                        <CheckCircleOutlined />
+                      )}
                     </Button>
                     <DeleteButton
                       type='primary'
@@ -129,6 +164,7 @@ function App() {
                         console.log(`${item.id} delete`);
                       }}
                       danger
+                      loading={loading}
                     >
                       <DeleteFilled />
                     </DeleteButton>
