@@ -80,7 +80,7 @@ function App() {
       });
   };
 
-  // function untuk update done
+  // function untuk update status sebuah task
   const handleUpdate = (taskId, taskName, taskDone) => {
     // // masukkan parameter taskName ke variabel editedTask, ubah status done jadi true
     let editedTask = { name: taskName, done: !taskDone };
@@ -90,6 +90,22 @@ function App() {
       .put(`http://localhost:3001/tasks/${taskId}`, editedTask)
       .then((res) => {
         // Jika berhasil update nyalakan trigger
+        console.log(res.statusText);
+        setTrigger(!trigger);
+      })
+      .catch((err) => {
+        // Jika gagal console log pesan error
+        console.log(err);
+      });
+  };
+
+  // function untuk hapus sebuah task
+  const handleDelete = (taskId) => {
+    // DELETE request ke backend
+    axios
+      .delete(`http://localhost:3001/tasks/${taskId}`)
+      .then((res) => {
+        // Jika berhasil delete nyalakan trigger
         console.log(res.statusText);
         setTrigger(!trigger);
       })
@@ -161,7 +177,7 @@ function App() {
                       type='primary'
                       title='delete'
                       onClick={() => {
-                        console.log(`${item.id} delete`);
+                        handleDelete(item.id);
                       }}
                       danger
                       loading={loading}

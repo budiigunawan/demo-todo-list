@@ -2,23 +2,18 @@
   "tasks": [
     {
       "name": "Presensi",
-      "done": true,
+      "done": false,
       "id": 1
     },
     {
       "name": "Parahealth",
-      "done": true,
+      "done": false,
       "id": 2
     },
     {
       "name": "TTDT",
       "done": false,
       "id": 3
-    },
-    {
-      "name": "makan siang",
-      "done": false,
-      "id": 4
     }
   ]
 }
