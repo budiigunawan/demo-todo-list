@@ -3,17 +3,22 @@
     {
       "id": 1,
       "name": "Presensi",
-      "done": "false"
+      "done": false
     },
     {
       "id": 2,
       "name": "Parahealth",
-      "done": "false"
+      "done": false
     },
     {
       "id": 3,
       "name": "TTDT",
-      "done": "false"
+      "done": false
+    },
+    {
+      "name": "makan siang",
+      "done": false,
+      "id": 4
     }
   ]
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo from './logo.svg';
-import { Spin, List, Divider, Button } from 'antd';
+import { Spin, List, Divider, Button, Form, Input } from 'antd';
 import './App.css';
 import styled from 'styled-components';
 
@@ -34,6 +34,7 @@ function App() {
   const [taskList, setTaskList] = useState(null); //Ini state untuk data-data task
   const [loading, setLoading] = useState(false); //Ini state untuk loading
   const [trigger, setTrigger] = useState(false); //Ini state untuk trigger fetch data
+  const [form] = Form.useForm();
 
   // useEffect akan dijalankan saat pertama kali render dan saat trigger berubah nilai
   useEffect(() => {
@@ -53,7 +54,27 @@ function App() {
         console.log(err);
         setLoading(false);
       });
-  }, []);
+  }, [trigger]);
+
+  // function untuk handle submit new task
+  const onFinish = ({ taskName }) => {
+    // masukan parameter taskName dari input ke variabel newTask
+    let newTask = { name: taskName, done: false };
+
+    // POST variabel newTask ke backend
+    axios
+      .post('http://localhost:3001/tasks', newTask)
+      .then((res) => {
+        // Jika berhasil reset form dan nyalakan trigger agar get data terbaru
+        console.log(res.statusText);
+        form.resetFields();
+        setTrigger(!trigger);
+      })
+      .catch((err) => {
+        // Jika gagal console log pesan error
+        console.log(err);
+      });
+  };
 
   return (
     <div className='App'>
@@ -62,6 +83,25 @@ function App() {
         <Divider orientation='center'>
           <TitleApp>Todo List App</TitleApp>
         </Divider>
+
+        {/* Component Form Input Task Start */}
+        <Form form={form} onFinish={onFinish} layout='inline'>
+          <Form.Item
+            label={<label style={{ color: 'whitesmoke' }}>Task Name</label>}
+            name='taskName'
+            rules={[{ required: true, message: 'Please input task name!' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' htmlType='submit' loading={loading}>
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+        {/* Component Form Input Task End */}
+
+        {/* Component Read All Tasks Start */}
         {loading ? (
           <Spin />
         ) : (
@@ -75,6 +115,7 @@ function App() {
                   <ButtonContainer>
                     <Button
                       type='primary'
+                      title='done'
                       onClick={() => {
                         console.log(`${item.name} done`);
                       }}
@@ -83,6 +124,7 @@ function App() {
                     </Button>
                     <DeleteButton
                       type='primary'
+                      title='delete'
                       onClick={() => {
                         console.log(`${item.id} delete`);
                       }}
@@ -96,6 +138,7 @@ function App() {
             />
           )
         )}
+        {/* Component Read All Tasks End */}
       </header>
     </div>
   );
